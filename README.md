@@ -33,11 +33,13 @@ USERNAME=admin
 PASSWORD=admin
 ```
 ## Step 5: Run the GUI
+You can use this template for any chatbot hosted on Gradio, where you have 'system role' and 'user message' as inputs and the model's response as the output.
+
 To start the GUI, run:
 ```
 python GUI.py
 ```
-![app](https://github.com/user-attachments/assets/770262f0-3ac8-4542-9102-cdfa06e1ffc4)
+![app](https://github.com/user-attachments/assets/5fd2b3ed-1881-41a8-8c69-844ef7f342c7)
 #### App URL:
 You can find the App URL in the Colab Notebook.
 ![colab](https://github.com/user-attachments/assets/20c36df7-056d-48b5-b512-74f1285e8822)
@@ -45,6 +47,9 @@ You can find the App URL in the Colab Notebook.
 Enter your desired system role.
 #### Language:
 Select the language in which you want to communicate.
+#### Gender:
+Select the Gender for Edge Text to Speech.
+
 Click the ```Start``` button to begin interacting with the virtual assistant.
 Click the ```Stop``` button to end the interaction. Please note that it might take some time for the process to stop — just be patient.
 
