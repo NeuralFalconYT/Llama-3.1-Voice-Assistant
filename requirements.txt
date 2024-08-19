@@ -1,0 +1,7 @@
+gradio==4.36.1
+edge-tts
+deep_translator==1.11.4
+nltk
+pydub==0.25.1
+SpeechRecognition==3.10.4
+simpleaudio==1.0.4
