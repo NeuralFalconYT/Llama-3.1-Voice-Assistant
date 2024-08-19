@@ -8,3 +8,4 @@ SpeechRecognition==3.10.4
 simpleaudio==1.0.4
 customtkinter
 tk
+python-dotenv
