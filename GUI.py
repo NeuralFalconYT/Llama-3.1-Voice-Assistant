@@ -18,8 +18,8 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Llama-3.1-8B Assistant")
-        self.geometry("520x330")  # Adjusted size for the main window
-        
+        self.geometry("540x280")  # Adjusted size for the main window
+
         # Variables
         self.system_role = """You are a helpful Assistant, friendly and fun,
 providing users with short and concise answers to their requests."""
@@ -28,26 +28,36 @@ providing users with short and concise answers to their requests."""
         self.running_event = threading.Event()
         self.recognition_thread = None
         self.recognition_lock = threading.Lock()
-        
+
+        # Configure grid columns and rows
+        self.grid_columnconfigure(0, weight=1)  # Left padding column
+        self.grid_columnconfigure(1, weight=2)  # Main content column
+        self.grid_columnconfigure(2, weight=1)  # Right padding column
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(2, weight=0)
+        self.grid_rowconfigure(3, weight=0)  # Adjusted weight for buttons
+        self.grid_rowconfigure(4, weight=0)  # Adjusted weight for buttons
+
         # App URL
         self.url_label = ctk.CTkLabel(self, text="App URL:")
-        self.url_label.grid(row=0, column=0, padx=10, pady=10)
-        
+        self.url_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+
         self.url_entry = ctk.CTkEntry(self, width=400)
-        self.url_entry.grid(row=0, column=1, padx=10, pady=10)
-        
+        self.url_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+
         # System Role
         self.role_label = ctk.CTkLabel(self, text="System Role:")
-        self.role_label.grid(row=1, column=0, padx=10, pady=10)
-        
+        self.role_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
         self.role_entry = ctk.CTkTextbox(self, width=400, height=100)
-        self.role_entry.grid(row=1, column=1, padx=10, pady=10)
+        self.role_entry.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
         self.role_entry.insert("0.0", self.system_role)
-        
+
         # Language Dropdown
         self.language_label = ctk.CTkLabel(self, text="Language:")
-        self.language_label.grid(row=2, column=0, padx=10, pady=10)
-        
+        self.language_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
         self.language_var = ctk.StringVar(value="English")
         self.language_dropdown = ctk.CTkComboBox(self, values=['English', 'Hindi', 'Bengali', 'Afrikaans', 'Amharic', 
                                                                'Arabic', 'Azerbaijani', 'Bulgarian', 'Bosnian', 'Catalan', 
@@ -63,15 +73,15 @@ providing users with short and concise answers to their requests."""
                                                                'Swedish', 'Swahili', 'Tamil', 'Telugu', 'Thai', 'Turkish', 
                                                                'Ukrainian', 'Urdu', 'Uzbek', 'Vietnamese', 'Chinese', 'Zulu'], 
                                                 variable=self.language_var, width=400)
-        self.language_dropdown.grid(row=2, column=1, padx=10, pady=10)
+        self.language_dropdown.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
         
         # Buttons
-        self.submit_button = ctk.CTkButton(self, text="Start", command=self.start_app)
-        self.submit_button.grid(row=3, column=0, columnspan=2, padx=180, pady=10, sticky="nsew")
-        
-        self.stop_button = ctk.CTkButton(self, text="Stop", command=self.stop_app)
-        self.stop_button.grid(row=4, column=0, columnspan=2, padx=180, pady=10, sticky="nsew")
-        
+        self.submit_button = ctk.CTkButton(self, text="Start", command=self.start_app, width=100)
+        self.submit_button.grid(row=3, column=1, padx=10, pady=5, sticky="ew")  # Centered in column 1
+
+        self.stop_button = ctk.CTkButton(self, text="Stop", command=self.stop_app, width=100)
+        self.stop_button.grid(row=4, column=1, padx=10, pady=5, sticky="ew")  # Centered in column 1
+
     def start_app(self):
         global client
         self.app_url = self.url_entry.get()
@@ -79,7 +89,7 @@ providing users with short and concise answers to their requests."""
         if custom_role:
             self.system_role = custom_role
         self.Language = self.language_var.get()
-        
+
         print(f"App URL: {self.app_url}")
         print(f"System Role: {self.system_role}")
         print(f"Language: {self.Language}")
@@ -92,10 +102,10 @@ providing users with short and concise answers to their requests."""
         self.running_event.set()
         if self.recognition_thread and self.recognition_thread.is_alive():
             self.stop_app()  # Ensure any previous thread is stopped
-        
+
         self.recognition_thread = threading.Thread(target=self.run_recognition)
         self.recognition_thread.start()
-    
+
     def stop_app(self):
         self.running_event.clear()  # Signal the thread to stop
         if self.recognition_thread:
@@ -103,7 +113,7 @@ providing users with short and concise answers to their requests."""
             with self.recognition_lock:
                 self.recognition_thread.join()  
         print("Recognition stopped.")
-    
+
     def run_recognition(self):
         recognizer = sr.Recognizer()
         recognizer.energy_threshold = 2000
@@ -116,20 +126,20 @@ providing users with short and concise answers to their requests."""
 
         with open('language_code.json') as f:
             languages = json.load(f)
-        
+
         def translate_text(text, Language):
             target_language = languages[Language]
             if Language == "Chinese":
                 target_language = 'zh-CN'
             translator = GoogleTranslator(target=target_language)
             return translator.translate(text.strip())
-        
+
         def notification_sound():
             filename = "./okay.wav"
             wave_obj = sa.WaveObject.from_wave_file(filename)
             play_obj = wave_obj.play()
             play_obj.wait_done()
-        
+
         def tts(text, Language='English', tts_save_path=''):
             Gender = "Female"
             translate_text_flag = True
