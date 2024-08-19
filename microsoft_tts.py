@@ -299,6 +299,7 @@ def merge_audio_files(audio_paths, output_path):
 def edge_free_tts(chunks_list,speed,voice_name,save_path,translate_text_flag,Language):
   # print(voice_name)
   # print(chunks_list)
+  store_text=""
   if len(chunks_list)>1:
     chunk_audio_list=[]
     if os.path.exists(f"{edge_folder}/edge_tts_voice"):
@@ -311,14 +312,15 @@ def edge_free_tts(chunks_list,speed,voice_name,save_path,translate_text_flag,Lan
         text=translate_text(i, Language)
       else:
         text=i
+      store_text+=text+" "
       text=text.replace('"',"")
       edge_command=f'edge-tts  --rate={calculate_rate_string(speed)}% --voice {voice_name} --text "{text}" --write-media {edge_folder}/edge_tts_voice/{k}.mp3'
-      print(edge_command)
       var1=os.system(edge_command)
       if var1==0:
         pass
       else:
         print(f"Failed: {i}")
+        print(edge_command)
       chunk_audio_list.append(f"{edge_folder}/edge_tts_voice/{k}.mp3")
       k+=1
     # print(chunk_audio_list)
@@ -329,13 +331,16 @@ def edge_free_tts(chunks_list,speed,voice_name,save_path,translate_text_flag,Lan
     else:
       text=chunks_list[0]
     text=text.replace('"',"")
+    store_text+=text+" "
     edge_command=f'edge-tts  --rate={calculate_rate_string(speed)}% --voice {voice_name} --text "{text}" --write-media {save_path}'
-    print(edge_command)
     var2=os.system(edge_command)
     if var2==0:
       pass
     else:
       print(f"Failed: {chunks_list[0]}")
+      print(edge_command)
+  with open("./temp.txt", "w", encoding="utf-8") as text_file:
+    text_file.write(store_text)
   return save_path
 
 
