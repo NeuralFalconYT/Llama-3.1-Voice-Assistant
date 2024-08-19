@@ -3,6 +3,7 @@ edge-tts
 deep_translator==1.11.4
 nltk
 pydub==0.25.1
+#PyAudio
 SpeechRecognition==3.10.4
 simpleaudio==1.0.4
 customtkinter
