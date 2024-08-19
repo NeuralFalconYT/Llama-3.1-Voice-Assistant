@@ -10,6 +10,8 @@ import os
 import platform
 from dotenv import load_dotenv
 from dotenv import dotenv_values
+from rich.console import Console
+console = Console()
 load_dotenv()  
 client = None
 Gender="Female"
@@ -123,8 +125,10 @@ providing users with short and concise answers to their requests."""
         try:
             client = Client(self.app_url, auth=[username, password])
             self.update_output(f"Connected to the server at {self.app_url}.")
+            console.print(f"Connected to the server at {self.app_url}.",style="bold green")
         except:
             self.update_output("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
+            console.print("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.",style="bold red")
             # notification_sound("./notification/server_error.wav")
             return
 
@@ -184,7 +188,8 @@ providing users with short and concise answers to their requests."""
                     print(f"Translating Llama Response to {Language}:")
                 else:
                     self.update_output("Llama Response:")
-                    print("Llama Response:")
+                    # print("Llama Response:")
+                    console.print(f"[bold green]Llama Response:[/bold green]")
                 with open("temp.txt", "r" , encoding='utf-8') as f:
                     print(f.read())
                     self.update_output(f"{f.read()}")
@@ -197,7 +202,8 @@ providing users with short and concise answers to their requests."""
                     llama_response = client.predict(self.system_role, user_msg, api_name="/predict")
                 except:
                     self.update_output("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
-                    print("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
+                    # print("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
+                    console.print("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.",style="bold red")
                     notification_sound("./notification/server_error.wav")
                 play_audio(llama_response, Language)
 
@@ -206,16 +212,19 @@ providing users with short and concise answers to their requests."""
                     with sr.Microphone() as source:
                         recognizer.adjust_for_ambient_noise(source, duration=calibration_duration)
                         self.update_output("\nListening...")
+                        console.print("\nListening...\n",style="bold red")  
                         notification_sound("./notification/okay.wav")
                         audio_data = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
                         MyText = recognizer.recognize_google(audio_data, language=languages[self.Language])
                         # MyText = MyText.lower()
                         self.update_output(f"Recognized Text: {MyText}")
-                        print(f"Recognized Text: {MyText}")
+                        # print(f"Recognized Text: {MyText}")
+                        console.print(f"[bold green]Recognized Text:[/bold green] {MyText}",style="yellow")
                         usr_msg = translate_text(MyText, "English") if self.Language != "English" else MyText
                         if self.Language != "English":
                             self.update_output(f"English Text: {usr_msg}")
                             print(f"English Text: {usr_msg}")
+                            console.print(f"[bold green]English Text:[/bold green] {usr_msg}",style="yellow")
                         chatbot(usr_msg, self.Language)
                             
                 except:
