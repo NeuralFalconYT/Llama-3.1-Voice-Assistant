@@ -9,3 +9,4 @@ simpleaudio==1.0.4
 customtkinter
 tk
 python-dotenv
+rich
