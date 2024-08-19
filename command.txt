@@ -1,3 +1,1 @@
 pip install -r requirements.txt
-
-edge-tts  --rate=+0% --voice en-US-BrianMultilingualNeural --text "hi t's okay" --write-media temp.mp3
