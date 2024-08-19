@@ -101,10 +101,11 @@ while True:
                 usr_msg=translate_text(MyText, "English")
             else:
                 usr_msg=MyText
-            
-            pronunciations = ["আলিশা"]  # Add any variations you want to consider
 
-            matching_variation = next((variation for variation in pronunciations if variation in MyText.lower()), None)
+            #call the bot when you say "meata" 
+            # pronunciations = ["meta","meta ai"]  # Add any variations you want to consider
+
+            # matching_variation = next((variation for variation in pronunciations if variation in MyText.lower()), None)
             matching_variation=True
             if matching_variation:
                 print("Send text: "+usr_msg)                        
