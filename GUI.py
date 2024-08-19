@@ -6,9 +6,32 @@ import simpleaudio as sa
 import speech_recognition as sr
 from deep_translator import GoogleTranslator
 import json
-
+import os
+import platform
+from dotenv import load_dotenv
+from dotenv import dotenv_values
+load_dotenv()  
 client = None
-
+config = dotenv_values(".env")
+username=config['USERNAME']
+password=config['PASSWORD']
+def clear_terminal():
+    """
+    Clears the terminal screen based on the operating system.
+    """
+    system = platform.system()
+    
+    if system == "Windows":
+        os.system('cls')
+    elif system == "Linux" or system == "Darwin":  # Darwin is macOS
+        os.system('clear')
+    else:
+        raise OSError(f"Unsupported operating system: {system}")
+def notification_sound(filename):
+    # filename = "./okay.wav"
+    wave_obj = sa.WaveObject.from_wave_file(filename)
+    play_obj = wave_obj.play()
+    play_obj.wait_done()
 # Initialize the app
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -18,7 +41,7 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Llama-3.1-8B Assistant")
-        self.geometry("540x280")  # Adjusted size for the main window
+        self.geometry("540x450")  # Adjusted size for the main window
 
         # Variables
         self.system_role = """You are a helpful Assistant, friendly and fun,
@@ -38,6 +61,7 @@ providing users with short and concise answers to their requests."""
         self.grid_rowconfigure(2, weight=0)
         self.grid_rowconfigure(3, weight=0)  # Adjusted weight for buttons
         self.grid_rowconfigure(4, weight=0)  # Adjusted weight for buttons
+        self.grid_rowconfigure(5, weight=1)  # Output area
 
         # App URL
         self.url_label = ctk.CTkLabel(self, text="App URL:")
@@ -82,6 +106,11 @@ providing users with short and concise answers to their requests."""
         self.stop_button = ctk.CTkButton(self, text="Stop", command=self.stop_app, width=100)
         self.stop_button.grid(row=4, column=1, padx=10, pady=5, sticky="ew")  # Centered in column 1
 
+        # Output Display
+        self.output_textbox = ctk.CTkTextbox(self, width=500, height=100, state='normal')
+        self.output_textbox.grid(row=5, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+        
     def start_app(self):
         global client
         self.app_url = self.url_entry.get()
@@ -90,13 +119,17 @@ providing users with short and concise answers to their requests."""
             self.system_role = custom_role
         self.Language = self.language_var.get()
 
-        print(f"App URL: {self.app_url}")
-        print(f"System Role: {self.system_role}")
-        print(f"Language: {self.Language}")
+        # self.update_output(f"App URL: {self.app_url}")
+        # self.update_output(f"System Role: {self.system_role}")
+        # self.update_output(f"Language: {self.Language}")
+
         try:
-            client = Client(self.app_url)
+            # client = Client(self.app_url)
+            client = Client(self.app_url,auth=[username, password])
+            self.update_output(f"Connected to the server at {self.app_url}.")
         except:
-            print("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
+            self.update_output("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
+            notification_sound("./notification/server_error.wav")
             return
 
         self.running_event.set()
@@ -112,7 +145,7 @@ providing users with short and concise answers to their requests."""
             # Wait for the thread to finish its current task
             with self.recognition_lock:
                 self.recognition_thread.join()  
-        print("Recognition stopped.")
+        self.update_output("Recognition stopped.")
 
     def run_recognition(self):
         recognizer = sr.Recognizer()
@@ -134,11 +167,7 @@ providing users with short and concise answers to their requests."""
             translator = GoogleTranslator(target=target_language)
             return translator.translate(text.strip())
 
-        def notification_sound():
-            filename = "./okay.wav"
-            wave_obj = sa.WaveObject.from_wave_file(filename)
-            play_obj = wave_obj.play()
-            play_obj.wait_done()
+        
 
         def tts(text, Language='English', tts_save_path=''):
             Gender = "Female"
@@ -149,37 +178,54 @@ providing users with short and concise answers to their requests."""
             edge_save_path = edge_tts_pipeline(text, Language, Gender, translate_text_flag=translate_text_flag, 
                                                no_silence=no_silence, speed=speed, tts_save_path=tts_save_path, 
                                                long_sentence=long_sentence)
-            print(f"Audio File Save at: {edge_save_path}")
+            # self.update_output(f"Audio File Save at: {edge_save_path}")
             return edge_save_path
 
         def play_audio(text, Language='English'):
             filename = 'temp.wav'
             tts(text, Language=Language, tts_save_path=filename)
+            if Language != "English":
+                self.update_output(f"Translating Llama Response to {Language}:")
+            else:
+                self.update_output("Llama Response:")
+            with open("temp.txt", "r" , encoding='utf-8') as f:
+                self.update_output(f"{f.read()}")
             wave_obj = sa.WaveObject.from_wave_file(filename)
             play_obj = wave_obj.play()
             play_obj.wait_done()
-
+            
         def chatbot(user_msg, Language='English'):
-            llama_response = client.predict(self.system_role, user_msg, api_name="/predict")
-            print(llama_response)
+            try:
+                llama_response = client.predict(self.system_role, user_msg, api_name="/predict")
+            except:
+                self.update_output("Error: Could not connect to the server. Please make sure the URL is correct and the server is running.")
+                notification_sound("./notification/server_error.wav")
             play_audio(llama_response, Language)
 
         while self.running_event.is_set():    
             try:
                 with sr.Microphone() as source:
                     recognizer.adjust_for_ambient_noise(source, duration=calibration_duration)
-                    print("Listening...")
-                    notification_sound()
+                    self.update_output("\nListening...")
+                    notification_sound("./notification/okay.wav")
                     audio_data = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
                     MyText = recognizer.recognize_google(audio_data, language=languages[self.Language])
-                    MyText = MyText.lower()
-                    print("Recognized text: "+MyText)
+                    # MyText = MyText.lower()
+                    self.update_output(f"Recognized Text: {MyText}")
                     usr_msg = translate_text(MyText, "English") if self.Language != "English" else MyText
+                    if self.Language != "English":
+                        self.update_output(f"English Text: {usr_msg}")
                     chatbot(usr_msg, self.Language)
-            except sr.RequestError:
-                print("API was unreachable or unresponsive")
-            except sr.UnknownValueError:
-                print("Unable to recognize speech")
+                        
+            except:
+                continue
+
+    def update_output(self, text):
+        self.output_textbox.configure(state='normal')
+        # self.output_textbox.tag_configure("colored", foreground=color)
+        self.output_textbox.insert("end", text + "\n")
+        self.output_textbox.yview_moveto(1)  # Scroll to the bottom
+        self.output_textbox.configure(state='disabled')
 
 if __name__ == "__main__":
     app = App()
