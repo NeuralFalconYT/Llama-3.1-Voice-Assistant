@@ -64,7 +64,7 @@ pip uninstall -r requirements.txt
 Then, delete the folder.
 
 ![1](https://github.com/user-attachments/assets/315253c0-4c91-449f-81b0-dab0b028f040)
-![2](https://github.com/user-attachments/assets/dbeca981-c029-4936-9eb1-7bd760d04739)
+![2](https://github.com/user-attachments/assets/3972d13c-0513-4f87-b00a-9d9f75d089a0)
 ![3](https://github.com/user-attachments/assets/53f6e45f-8e85-4fc5-91e3-3daa0b9f23d1)
 ![4](https://github.com/user-attachments/assets/1f20a110-dc75-4528-b981-29b9b9f78f26)
 
