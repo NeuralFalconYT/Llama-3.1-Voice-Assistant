@@ -52,8 +52,11 @@ Select the Gender for Edge Text to Speech.
 
 Click the ```Start``` button to begin interacting with the virtual assistant.
 Click the ```Stop``` button to end the interaction. Please note that it might take some time for the process to stop — just be patient.
-
-## Step 6: Uninstall (Optional)
+## Step 6: Get Talking Head Avatar (Optional)
+![Talking_Head_Avatar](https://github.com/user-attachments/assets/b1ea8927-f622-4b84-933e-13481a9ec199)<br>
+Download [VMagicMirror](https://malaybaku.github.io/VMagicMirror/en/)<br>
+Set up a VTUBER model & lip sync mic as Stereo Mix (Realtek(R) Audio)
+## Step 7: Uninstall (Optional)
 To uninstall, run:
 ```
 pip uninstall -r requirements.txt
