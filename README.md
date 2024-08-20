@@ -68,3 +68,10 @@ Then, delete the folder.
 ![3](https://github.com/user-attachments/assets/53f6e45f-8e85-4fc5-91e3-3daa0b9f23d1)
 ![4](https://github.com/user-attachments/assets/1f20a110-dc75-4528-b981-29b9b9f78f26)
 
+## Acknowledgments
+
+I would like to express my sincere gratitude to the following people and organizations:
+- **[Hermes-3-Llama-3.1-8B]**: A special thanks to the creators of [[Hermes-3-Llama-3.1-8B](https://huggingface.co/NousResearch/Hermes-3-Llama-3.1-8B)] to Fine Tune the Llama-3.1.
+- **[Anding Analytics]**: [[For Visualize Sound Code](https://youtu.be/675teI6-_-g?si=wT9mWgvrGRxasvNU)].
+
+
