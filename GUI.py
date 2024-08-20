@@ -1,3 +1,8 @@
+###
+# Audio Wave sign code part copied from
+#https://youtu.be/675teI6-_-g?si=wT9mWgvrGRxasvNU
+###
+
 import customtkinter as ctk
 from gradio_client import Client
 from microsoft_tts import edge_tts_pipeline
