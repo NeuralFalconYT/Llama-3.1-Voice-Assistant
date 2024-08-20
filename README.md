@@ -39,7 +39,7 @@ To start the GUI, run:
 ```
 python GUI.py
 ```
-![app](https://github.com/user-attachments/assets/5fd2b3ed-1881-41a8-8c69-844ef7f342c7)
+![app](https://github.com/user-attachments/assets/2c9ed26a-07ae-4c54-83c2-6bb038bbdd37)
 #### App URL:
 You can find the App URL in the Colab Notebook.
 ![colab](https://github.com/user-attachments/assets/20c36df7-056d-48b5-b512-74f1285e8822)
