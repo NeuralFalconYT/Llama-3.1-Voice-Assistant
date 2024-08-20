@@ -190,18 +190,26 @@ providing users with short and concise answers to their requests."""
         self.draw_sine_wave(amplitude)
         self.after(17, self.update_wave)  # Update at ~60 FPS
     def stop_app(self):
-        self.running_event.clear()  # Signal the thread to stop
-        if self.recognition_thread:
-            self.recognition_thread.join()
-        self.recognition_thread = None
-        self.update_output("Recognition stopped.")
-
+        # Signal the thread to stop
+        self.running_event.clear()
+        
         # Properly close the audio stream and terminate PyAudio
-        if self.stream:
+        if self.stream and self.stream.is_active():
             self.stream.stop_stream()
             self.stream.close()
+
+        # Terminate PyAudio instance if not already terminated
+        if self.p:
             self.p.terminate()
-        self.p = pyaudio.PyAudio()  # Reinitialize PyAudio instance
+            self.p = None
+
+        # Update the UI to reflect that the app has stopped
+        self.update_output("Recognition stopped.")
+
+        # Ensure the thread is stopped without blocking the main thread
+        if self.recognition_thread:
+            self.recognition_thread = None
+
 
     def start_app(self):
         global client, Gender, username, password
