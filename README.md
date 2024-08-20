@@ -8,7 +8,9 @@ Because the response time is faster than Llama-3.1-8B.
 ## Step 2: Clone the Repository or Download ZIP
 To clone the repository:
 ```
-git clone https://github.com/NeuralFalconYT/Llama-3.1-Virtual-Assistant.git
+git clone https://github.com/NeuralFalconYT/Llama-3.1-Voice-Assistant.git
+```
+```
 cd Llama-3.1-Virtual-Assistant
 ```
 Alternatively, download the ZIP file, extract the folder, and navigate to it:
@@ -20,6 +22,8 @@ My Python version is ```Python 3.10```<br>
 Install the necessary packages:
 ```
 pip install -r requirements.txt
+```
+```
 pip install PyAudio
 ```
 [Fix PyAudio Installation Error](https://youtu.be/rIFL4vtX0iA?si=jtJwhCOAN5Okx8J-)
