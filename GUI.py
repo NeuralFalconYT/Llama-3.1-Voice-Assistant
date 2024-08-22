@@ -27,7 +27,17 @@ config = dotenv_values(".env")
 username=config['USERNAME']
 password=config['PASSWORD']
 hexcode='#5ce65c'
-
+import re
+def clean_llm_text(text):
+    bad_symbol = ['\n', '*', "\\'", '"', ':','-']
+    for i in bad_symbol:
+        if i in ['\n']:
+            space = " "
+        else:
+            space = ""
+        text = text.replace(i, space) 
+    text=re.sub(r'\s*\([^)]*\)', '', text)
+    return text.strip()
 def notification_sound(filename):
     wave_obj = sa.WaveObject.from_wave_file(filename)
     play_obj = wave_obj.play()
@@ -287,6 +297,7 @@ providing users with short and concise answers to their requests."""
         def play_audio(text, Language='English'):
             global hexcode
             filename = 'temp.wav'
+            text=clean_llm_text(text)
             tts(text, Language=Language, tts_save_path=filename)
             if Language != "English":
                 self.update_output(f"Translating Llama Response to {Language}:")
