@@ -372,6 +372,9 @@ def edge_tts_pipeline(input_text,Language,Gender,translate_text_flag=True,no_sil
   # long_sentence=True
   # translate_text_flag=True
   # speed=1
+  if long_sentence==False:
+    if len(input_text)>500:
+      long_sentence=True
   voice_name=''
   if Gender=="Male":
     voice_name=male_voice_list[Language]
